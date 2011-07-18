@@ -5,3 +5,5 @@ galaxySizeY = 3 :: Int
 galaxySizeZ = 3 :: Int
 
 galaxyInitSystemsNumber = 5 :: Int
+
+factionName = "The Rulers"

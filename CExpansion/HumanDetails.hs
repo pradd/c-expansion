@@ -1,4 +1,4 @@
-﻿module HumanDetails where
+module CExpansion.HumanDetails where
 
 data HumanDetails = HumanDetails {faction :: String,
                                   population :: Integer, 

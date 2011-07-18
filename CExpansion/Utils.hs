@@ -1,9 +1,9 @@
-module Utils where
+module CExpansion.Utils where
 
 split :: [a] -> ([a], [a])
 split []       = ([], [])
 split [x]      = ([x], [])
-split (x:y:xs) = ( x : (fst (split xs)), y : (snd (split xs)) )
+split (x:y:xs) = ( x : fst (split xs), y : snd (split xs) )
 
 split3 l = (xs, ys, zs)
   where (xs, qs) = split l

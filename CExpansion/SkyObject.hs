@@ -1,7 +1,7 @@
-﻿module SkyObject ( SkyObject, SkyObjectType, randomSkyObjectsGenerator, placeFactionSkyObject ) where
+module CExpansion.SkyObject ( SkyObject, SkyObjectType, randomSkyObjectsGenerator, placeFactionSkyObject ) where
 
-import Utils ( intToFloat, intToInteger )
-import HumanDetails (HumanDetails, placeFactionHumanDetails, defaultHumanDetails)
+import CExpansion.Utils ( intToFloat, intToInteger )
+import CExpansion.HumanDetails (HumanDetails, placeFactionHumanDetails, defaultHumanDetails)
 
 data SkyObject = SkyObject {humanDetails :: HumanDetails, 
                             objectType :: SkyObjectType

@@ -1,5 +1,5 @@
-module Dao (saveDb, loadDb) where
-import SolarSystem
+module CExpansion.Dao (saveDb, loadDb) where
+import CExpansion.SolarSystem
 
 dbName = "galaxy.db"
 
@@ -7,7 +7,7 @@ dbName = "galaxy.db"
 saveDb :: [SolarSystem] -> IO()
 saveDb x = writeFile dbName $ show x
 
-loadDb :: IO([SolarSystem])
+loadDb :: IO [SolarSystem]
 loadDb = do
     file <- readFile dbName
     return (read file)
