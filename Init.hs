@@ -1,4 +1,4 @@
-module Init where
+module Init ( main ) where
 
 import System ( getArgs )
 import System.Random ( randoms, newStdGen )
