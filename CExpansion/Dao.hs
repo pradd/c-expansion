@@ -1,15 +1,13 @@
 module CExpansion.Dao (saveDb, loadDb) where
 import CExpansion.SolarSystem
 
-dbName = "galaxy.db"
-
 -- TODO: rewrite file on save
-saveDb :: [SolarSystem] -> IO()
-saveDb x = writeFile dbName $ show x
+saveDb :: String -> [SolarSystem] -> IO()
+saveDb dbOut x = writeFile dbOut $ show x
 
-loadDb :: IO [SolarSystem]
-loadDb = do
-    file <- readFile dbName
+loadDb :: String -> IO [SolarSystem]
+loadDb dbIn = do
+    file <- readFile dbIn
     return (read file)
     
 

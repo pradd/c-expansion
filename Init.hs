@@ -1,5 +1,6 @@
-module InitGalaxy where
+module Init where
 
+import System ( getArgs )
 import System.Random ( randoms, newStdGen )
 import Data.List ( nub )
 import CExpansion.Dao ( saveDb )
@@ -9,11 +10,14 @@ import CExpansion.SkyObject
 import CExpansion.HumanDetails
 import CExpansion.Utils ( split )
 
-main = initGalaxy
+main = do
+    args <- getArgs
+    galaxy <- initGalaxy
+    saveDb (head args) galaxy
 
 initGalaxy = do
     seed <- newStdGen
-    saveDb (placeFactionInGalaxy factionName $ createGalaxy (randoms seed))
+    return $ placeFactionInGalaxy factionName $ createGalaxy (randoms seed)
 
 createGalaxy :: [Int] -> [SolarSystem]
 createGalaxy rs = map (createSystem ns) (createCoordsDistinct ms)
