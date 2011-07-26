@@ -1,6 +1,6 @@
 module CExpansion.SolarSystem where
 
-import CExpansion.SkyObject (SkyObject, placeFactionSkyObject)
+import CExpansion.SkyObject ( SkyObject, placeFactionSkyObject, populatedSkyObjects )
 
 data SolarSystem = SolarSystem { coords :: Coords , skyObjects :: [SkyObject] }
   deriving (Show, Read)
@@ -10,3 +10,6 @@ data Coords = Coords {x :: Int, y :: Int, z :: Int}
 
 placeFactionInSystem factionName system = system { skyObjects = s }
   where s = placeFactionSkyObject factionName (head (skyObjects system)) : tail (skyObjects system)
+
+isSystemPopulated sys = length (populatedSkyObjects (skyObjects sys)) > 0
+

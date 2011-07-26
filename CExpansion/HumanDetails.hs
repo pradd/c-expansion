@@ -5,8 +5,6 @@ data HumanDetails = HumanDetails {faction :: String,
                                   morale :: Float
                                  } deriving (Show, Read)
 
-defaultHumanDetails = HumanDetails { faction = "", population = 0, morale = 0.0 }
-
-placeFactionHumanDetails factionName humanDetails = HumanDetails { faction = factionName, 
-                                                                   population = 100000000, 
-                                                                   morale = 0.5 }
+placeFactionHumanDetails factionName = HumanDetails { faction = factionName, 
+                                                      population = 100000000, 
+                                                      morale = 0.5 }

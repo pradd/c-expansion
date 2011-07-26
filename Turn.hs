@@ -1,8 +1,10 @@
 module Turn ( main ) where
 
 import System ( getArgs )
-import List ( length )
+import Data.List ( length )
 import CExpansion.Dao ( saveDb, loadDb )
+import CExpansion.Galaxy
+import qualified Config ( factionName )
 
 main = do
     args <- getArgs
@@ -12,17 +14,28 @@ main = do
 
 turn = id
 
-printFactionInfo galaxy = do writeFile "status.txt" (composeFactionInfo galaxy)
+printFactionInfo galaxy = writeFile "report.txt" (composeFactionInfo galaxy)
 
-composeFactionInfo galaxy = foldl concat "" list
-        where list = map (apply galaxy) [header, body]
-              apply gal f = f gal
+composeFactionInfo galaxy = foldl concat "" parts
+        where parts = map ($ galaxy) reportStructure
               concat x y = x ++ "\n" ++ y
 
-header galaxy = factionName ++ (systemsTotal galaxy)
+reportStructure = [
+                    -- header    
+                    factionName
+                  , systemsTotal
+                  , populatedSystemsTotal
+                  , reportPartsBreak
+                    -- body
+                  , body
+                  ]
 
-factionName = "Faction name: adfsdfsafsd\n"
+reportPartsBreak _ = "=================="
+
+factionName _ = "Faction name: " ++ Config.factionName ++ "\n"
 
 systemsTotal galaxy = "Total systems: " ++ show (length galaxy) ++ "\n"
+
+populatedSystemsTotal galaxy = "Populated systems: " ++ show (length $ populatedSystems galaxy) ++ "\n"
               
 body galaxy = "Body=========="

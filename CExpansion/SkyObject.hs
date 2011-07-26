@@ -1,9 +1,10 @@
-module CExpansion.SkyObject ( SkyObject, SkyObjectType, randomSkyObjectsGenerator, placeFactionSkyObject ) where
+module CExpansion.SkyObject ( SkyObject, SkyObjectType, randomSkyObjectsGenerator, placeFactionSkyObject, populatedSkyObjects ) where
 
+import Data.Maybe
 import CExpansion.Utils ( intToFloat, intToInteger )
-import CExpansion.HumanDetails (HumanDetails, placeFactionHumanDetails, defaultHumanDetails)
+import CExpansion.HumanDetails ( HumanDetails, placeFactionHumanDetails )
 
-data SkyObject = SkyObject {humanDetails :: HumanDetails, 
+data SkyObject = SkyObject {humanDetails :: Maybe HumanDetails, 
                             objectType :: SkyObjectType
                             -- astroDetails
                             -- geoDetais
@@ -16,11 +17,13 @@ data SkyObjectType = Planet
 
 randomSkyObjectsGenerator :: [Int] -> [SkyObject]
 randomSkyObjectsGenerator (z:rs) = obj : randomSkyObjectsGenerator rs
-  where obj = SkyObject {humanDetails = defaultHumanDetails, 
+  where obj = SkyObject {humanDetails = Nothing,
                          objectType = randomSkyObjectType z
                          }
 
 randomSkyObjectType r = if r `mod` 5 == 0 then Belt else Planet
 
-placeFactionSkyObject factionName obj = obj { humanDetails = d }
-  where d = placeFactionHumanDetails factionName (humanDetails obj)
+placeFactionSkyObject factionName obj = obj { humanDetails = Just d }
+  where d = placeFactionHumanDetails factionName
+
+populatedSkyObjects skyObjects = [x | x <- skyObjects, isJust (humanDetails x)]
