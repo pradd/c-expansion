@@ -1,1 +1,1 @@
-hlint . --report
+hlint src --report
