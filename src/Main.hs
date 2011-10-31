@@ -8,7 +8,6 @@ import Control.Exception    ( bracket)
 import Control.Monad        ( msum)
 import Control.Monad.Reader ( ask)
 import Control.Monad.State  ( get, put)
-import Data.Data            ( Data, Typeable)
 import Happstack.Server
 import Happstack.State
 import CExpansion.Galaxy
@@ -22,18 +21,18 @@ execTurn =
        let new = turn (galaxy appState) 
        put $ appState { galaxy = new } 
        return new
-{-
-peekCounter :: Query AppState Counter
-peekCounter = count <$> ask
--}
-$(mkMethods ''AppState ['execTurn ])
+
+getGalaxy :: Query AppState Galaxy
+getGalaxy = galaxy <$> ask
+
+$(mkMethods ''AppState ['execTurn, 'getGalaxy])
 
 handlers :: ServerPart Response
-handlers = msum [ dir "report" $ do -- c <- query PeekCounter
-                                  ok $ toResponse $ "Report" -- ++ show (unCounter c)
+handlers = msum [ dir "report" $ do g <- query GetGalaxy
+                                    ok $ toResponse $ printFactionInfo g
                 , do nullDir 
-                     c <- update (ExecTurn)
-                     ok $ toResponse $ "Home" -- ++ show (unCounter c)
+                     c <- update ExecTurn
+                     ok $ toResponse $ "Home" 
                 ]
 
 main = do bracket (startSystemState (Proxy :: Proxy AppState)) createCheckpointAndShutdown $ 

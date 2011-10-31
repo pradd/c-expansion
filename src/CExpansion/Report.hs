@@ -4,7 +4,8 @@ import Data.List ( length, intercalate )
 import CExpansion.Galaxy
 import qualified Config ( factionName )
 
-printFactionInfo galaxy = writeFile "report.txt" (composeFactionInfo galaxy)
+printFactionInfo g = composeFactionInfo (ss g)
+                        where ss (Galaxy x) = x
 
 composeFactionInfo galaxy = intercalate "\n" parts
         where parts = map ($ galaxy) reportStructure
