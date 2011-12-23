@@ -1,31 +1,20 @@
 module CExpansion.Report ( printFactionInfo ) where
 
+import Text.StringTemplate
 import Data.List ( length, intercalate )
 import CExpansion.Galaxy
 import qualified Config ( factionName )
 
-printFactionInfo g = composeFactionInfo (ss g)
-                        where ss (Galaxy x) = x
+printFactionInfo templateText g = let template = newSTMP templateText
+                                      ss (Galaxy xs) = xs
+                                  in  toString $ setAttrs template (ss g) 
 
-composeFactionInfo galaxy = intercalate "\n" parts
-        where parts = map ($ galaxy) reportStructure
+setAttrs template ss =  setAttribute "factionName" Config.factionName 
+                      $ setAttribute "systemsTotal"  (systemsTotal ss)
+                      $ setAttribute "populatedSystemsTotal" (populatedSystemsTotal ss)
+                      $ template
 
-reportStructure = [
-                    -- header    
-                    factionName
-                  , systemsTotal
-                  , populatedSystemsTotal
-                  , reportPartsBreak
-                    -- body
-                  , body
-                  ]
+systemsTotal galaxy = show (length galaxy)
 
-reportPartsBreak _ = "=================="
-
-factionName _ = "Faction name: " ++ Config.factionName ++ "\n"
-
-systemsTotal galaxy = "Total systems: " ++ show (length galaxy) ++ "\n"
-
-populatedSystemsTotal galaxy = "Populated systems: " ++ show (length $ populatedSystems galaxy) ++ "\n"
+populatedSystemsTotal galaxy = show (length $ populatedSystems galaxy)
               
-body galaxy = "Body=========="

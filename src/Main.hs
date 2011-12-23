@@ -10,7 +10,9 @@ import Control.Monad.Reader ( ask)
 import Control.Monad.State  ( get, put)
 import Happstack.Server
 import Happstack.State
-
+import Text.StringTemplate
+import qualified Data.ByteString.Char8           as B
+import qualified Data.ByteString.Lazy.UTF8       as LU (fromString)
 import Config
 import CExpansion.Galaxy
 import CExpansion.Report ( printFactionInfo )
@@ -29,17 +31,26 @@ getGalaxy = galaxy <$> ask
 
 $(mkMethods ''AppState ['execTurn, 'getGalaxy])
 
-handlers :: ServerPart Response
-handlers = msum [ dir "report" $ do g <- query GetGalaxy
-                                    ok $ toResponse $ printFactionInfo g
-                , do nullDir 
-                     c <- update ExecTurn
-                     ok $ toResponse $ "Home" 
-                ]
+handlers :: [String] -> ServerPart Response
+handlers templates = msum [ dir "report" $ do g <- query GetGalaxy
+                                              ok $ toResponse $ Page $ printFactionInfo (templates !! 0) g
+                          , do  nullDir 
+                                c <- update ExecTurn
+                                ok $ toResponse $ "Home" 
+                          ]
 
-main = do bracket (startSystemState (Proxy :: Proxy AppState)) createCheckpointAndShutdown $ 
-            \_control -> simpleHTTP nullConf {port=serverPort} handlers
+main = do templates <- loadTemplates
+          bracket (startSystemState (Proxy :: Proxy AppState)) createCheckpointAndShutdown $ 
+            \_control -> simpleHTTP nullConf {port=serverPort} (handlers templates)
        where createCheckpointAndShutdown control = do createCheckpoint control
                                                       shutdownSystem control
 
+loadTemplates = do templateText <- readFile "tpl/report.st"
+                   return [templateText]
+
+data Page = Page String
+
+instance ToMessage Page where
+    toContentType _ = B.pack "text/html; charset=UTF-8"
+    toMessage (Page s) = LU.fromString s
 
