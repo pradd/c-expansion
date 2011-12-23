@@ -10,6 +10,8 @@ import Control.Monad.Reader ( ask)
 import Control.Monad.State  ( get, put)
 import Happstack.Server
 import Happstack.State
+
+import Config
 import CExpansion.Galaxy
 import CExpansion.Report ( printFactionInfo )
 
@@ -36,7 +38,7 @@ handlers = msum [ dir "report" $ do g <- query GetGalaxy
                 ]
 
 main = do bracket (startSystemState (Proxy :: Proxy AppState)) createCheckpointAndShutdown $ 
-            \_control -> simpleHTTP nullConf {port=80} handlers
+            \_control -> simpleHTTP nullConf {port=serverPort} handlers
        where createCheckpointAndShutdown control = do createCheckpoint control
                                                       shutdownSystem control
 
