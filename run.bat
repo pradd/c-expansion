@@ -1,2 +1,3 @@
 cd src
-runhaskell Main.hs
+start runhaskell Main.hs
+start http://localhost/report
