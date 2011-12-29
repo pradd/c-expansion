@@ -32,14 +32,12 @@ getGalaxy = galaxy <$> ask
 $(mkMethods ''AppState ['execTurn, 'getGalaxy])
 
 handlers :: [String] -> ServerPart Response
-handlers templates = msum [ 
-                            dir "turn" $ do g <- update ExecTurn
-                                            ok $ toResponse $ Page $ printFactionInfo (templates !! 0) (turn g) 
+handlers templates = uriRest $ action (templates !! 0)
 
-                          , do  nullDir 
-                                g <- query GetGalaxy 
-                                ok $ toResponse $ Page $ printFactionInfo (templates !! 0) g
-                          ]
+action template "/turn" = do g <- update ExecTurn
+                             ok $ toResponse $ Page $ printFactionInfo template g 
+action template _       = do g <- query GetGalaxy 
+                             ok $ toResponse $ Page $ printFactionInfo template g
 
 main = do templates <- loadTemplates
           bracket (startSystemState (Proxy :: Proxy AppState)) createCheckpointAndShutdown $ 
