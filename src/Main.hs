@@ -16,8 +16,7 @@ import qualified Data.ByteString.Lazy.UTF8       as LU (fromString)
 import Config
 import CExpansion.Galaxy
 import CExpansion.Report ( printFactionInfo )
-
-turn = id
+import CExpansion.Turn ( turn )
 
 execTurn :: Update AppState Galaxy
 execTurn =
