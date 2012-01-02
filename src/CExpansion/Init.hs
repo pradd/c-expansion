@@ -42,4 +42,4 @@ placeFactionSkyObject factionName obj = obj { humanDetails = Just d }
   where d = placeFactionHumanDetails factionName
 
 placeFactionInSystem factionName system = system { skyObjects = s }
-  where s = placeFactionSkyObject factionName (head (skyObjects system)) : tail (skyObjects system)
+  where s = placeFactionSkyObject factionName (head (skyObjects system)) : tail (skyObjects system) -- FIXME: head of empty list

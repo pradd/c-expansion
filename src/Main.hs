@@ -46,12 +46,16 @@ $(mkMethods ''AppState ['execInit, 'execTurn, 'getGalaxy])
 handlers :: [String] -> ServerPart Response
 handlers templates = uriRest $ action (templates !! 0)
 
+action _   "/dump" = do g <- query GetGalaxy
+                        dumpResponse g
 action tpl "/init" = do g <- update ExecInit
                         reportResponse tpl g
 action tpl "/turn" = do g <- update ExecTurn
                         reportResponse tpl g
 action tpl _       = do g <- query GetGalaxy 
                         reportResponse tpl g
+
+dumpResponse galaxy = ok $ toResponse $ PlainText $ show galaxy
 
 reportResponse template galaxy = ok $ toResponse $ Page $ printFactionInfo template galaxy
 
@@ -65,8 +69,13 @@ loadTemplates = do templateText <- readFile "tpl/report.st"
                    return [templateText]
 
 data Page = Page String
+data PlainText = PlainText String
 
 instance ToMessage Page where
     toContentType _ = B.pack "text/html; charset=UTF-8"
     toMessage (Page s) = LU.fromString s
+
+instance ToMessage PlainText where
+    toContentType _ = B.pack "text/plain; charset=UTF-8"
+    toMessage (PlainText s) = LU.fromString s
 
