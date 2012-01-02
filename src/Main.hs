@@ -17,6 +17,19 @@ import Config
 import CExpansion.Galaxy
 import CExpansion.Report ( printFactionInfo )
 import CExpansion.Turn ( turn )
+import CExpansion.Init ( initGalaxy )
+
+execInit :: Update AppState Galaxy
+execInit = do rs <- randoms (1000 * Config.galaxyInitSystemsNumber) -- XXX fix randoms calculation
+              let new = initGalaxy rs
+              appState <- get
+              put $ appState { galaxy = new }
+              return new
+
+randoms 0 = return []
+randoms n = do x <- getRandom
+               rs <- randoms (n-1)
+               return (x:rs)
 
 execTurn :: Update AppState Galaxy
 execTurn =
@@ -28,15 +41,19 @@ execTurn =
 getGalaxy :: Query AppState Galaxy
 getGalaxy = galaxy <$> ask
 
-$(mkMethods ''AppState ['execTurn, 'getGalaxy])
+$(mkMethods ''AppState ['execInit, 'execTurn, 'getGalaxy])
 
 handlers :: [String] -> ServerPart Response
 handlers templates = uriRest $ action (templates !! 0)
 
-action template "/turn" = do g <- update ExecTurn
-                             ok $ toResponse $ Page $ printFactionInfo template g 
-action template _       = do g <- query GetGalaxy 
-                             ok $ toResponse $ Page $ printFactionInfo template g
+action tpl "/init" = do g <- update ExecInit
+                        reportResponse tpl g
+action tpl "/turn" = do g <- update ExecTurn
+                        reportResponse tpl g
+action tpl _       = do g <- query GetGalaxy 
+                        reportResponse tpl g
+
+reportResponse template galaxy = ok $ toResponse $ Page $ printFactionInfo template galaxy
 
 main = do templates <- loadTemplates
           bracket (startSystemState (Proxy :: Proxy AppState)) createCheckpointAndShutdown $ 
