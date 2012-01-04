@@ -71,4 +71,15 @@ isSystemPopulated sys = length (populatedSkyObjects (skyObjects sys)) > 0
 populatedSystems galaxy = [x | x <- galaxy, isSystemPopulated x]
 
 
+withSolarSystems f (Galaxy ss) = Galaxy (map f ss)
 
+withSkyObjects f galaxy = withSolarSystems f' galaxy 
+        where f' :: SolarSystem -> SolarSystem
+              f' ss = ss { skyObjects = (map f (skyObjects ss)) }
+
+withHumanDetails f galaxy = withSkyObjects f' galaxy 
+        where f' :: SkyObject -> SkyObject
+              f' so = so { humanDetails = fm (humanDetails so) }
+              fm :: Maybe HumanDetails -> Maybe HumanDetails
+              fm Nothing = Nothing
+              fm (Just x) = Just (f x)
