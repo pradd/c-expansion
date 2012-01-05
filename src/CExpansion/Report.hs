@@ -5,11 +5,14 @@ import Data.List ( length, intercalate )
 import CExpansion.Galaxy
 import qualified Config ( factionName )
 
-printFactionInfo templateText g = let template = newSTMP templateText
+printFactionInfo templateText g notifications = 
+                                  let template = newSTMP templateText
                                       ss (Galaxy xs) = xs
-                                  in  toString $ setAttrs template (ss g) 
+                                  in  toString $ setAttrs template (ss g) notifications
 
-setAttrs template ss =  setAttribute "factionName" Config.factionName 
+setAttrs template ss notifications = 
+                        setAttribute "notifications" notifications 
+                      $ setAttribute "factionName" Config.factionName 
                       $ setAttribute "systemsTotal"  (systemsTotal ss)
                       $ setAttribute "populatedSystemsTotal" (populatedSystemsTotal ss)
                       $ template

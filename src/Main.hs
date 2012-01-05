@@ -49,15 +49,15 @@ handlers templates = uriRest $ action (templates !! 0)
 action _   "/dump" = do g <- query GetGalaxy
                         dumpResponse g
 action tpl "/init" = do g <- update ExecInit
-                        reportResponse tpl g
+                        reportResponse tpl g "Galaxy has been initialized"
 action tpl "/turn" = do g <- update ExecTurn
-                        reportResponse tpl g
+                        reportResponse tpl g "Turn!!"
 action tpl _       = do g <- query GetGalaxy 
-                        reportResponse tpl g
+                        reportResponse tpl g ""
 
 dumpResponse galaxy = ok $ toResponse $ PlainText $ show galaxy
 
-reportResponse template galaxy = ok $ toResponse $ Page $ printFactionInfo template galaxy
+reportResponse template galaxy notifications = ok $ toResponse $ Page $ printFactionInfo template galaxy notifications
 
 main = do templates <- loadTemplates
           bracket (startSystemState (Proxy :: Proxy AppState)) createCheckpointAndShutdown $ 
