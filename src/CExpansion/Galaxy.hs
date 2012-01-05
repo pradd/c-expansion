@@ -75,11 +75,11 @@ withSolarSystems f (Galaxy ss) = Galaxy (map f ss)
 
 withSkyObjects f galaxy = withSolarSystems f' galaxy 
         where f' :: SolarSystem -> SolarSystem
-              f' ss = ss { skyObjects = (map f (skyObjects ss)) }
+              f' ss@(SolarSystem {skyObjects = so}) = ss { skyObjects = map f so }
 
 withHumanDetails f galaxy = withSkyObjects f' galaxy 
         where f' :: SkyObject -> SkyObject
-              f' so = so { humanDetails = fm (humanDetails so) }
+              f' so@(SkyObject {humanDetails = hd}) = so { humanDetails = fm hd }
               fm :: Maybe HumanDetails -> Maybe HumanDetails
               fm Nothing = Nothing
               fm (Just x) = Just (f x)

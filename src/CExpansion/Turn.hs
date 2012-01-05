@@ -7,6 +7,6 @@ turn g = increasePopulation g
 
 increasePopulation = withHumanDetails f
     where   f :: HumanDetails -> HumanDetails
-            f hd = hd {population = grow (population hd)}
+            f hd@(HumanDetails {population = p}) = hd {population = grow p}
             grow pop = ceiling ((fromIntegral pop) * 1.02)
 
