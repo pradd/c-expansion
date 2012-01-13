@@ -1,7 +1,6 @@
 module CExpansion.Report ( printFactionInfo ) where
 
 import Text.StringTemplate
-import Data.List ( length, intercalate )
 import CExpansion.Galaxy
 import qualified Config ( factionName )
 

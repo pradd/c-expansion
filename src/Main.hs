@@ -10,7 +10,6 @@ import Control.Monad.Reader ( ask)
 import Control.Monad.State  ( get, put)
 import Happstack.Server
 import Happstack.State
-import Text.StringTemplate
 import qualified Data.ByteString.Char8           as B
 import qualified Data.ByteString.Lazy.UTF8       as LU (fromString)
 import Config

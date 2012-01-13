@@ -1,6 +1,5 @@
 module CExpansion.Turn ( turn ) where
 
-import Config
 import CExpansion.Galaxy
 
 turn g = increasePopulation g

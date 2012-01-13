@@ -5,7 +5,6 @@ module CExpansion.Galaxy where
 
 import Happstack.State
 import Data.Data ( Data, Typeable)
-import CExpansion.Utils
 
 data HumanDetails = HumanDetails {faction :: String,
                                   population :: Integer, 
