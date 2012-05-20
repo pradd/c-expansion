@@ -33,12 +33,11 @@ randomSkyObjectsGenerator (z:rs) = obj : randomSkyObjectsGenerator rs
 
 randomSkyObjectType r = if r `mod` 5 == 0 then Belt else Planet
 
-placeFactionHumanDetails factionName = HumanDetails { faction = factionName, 
-                                                      population = 100000000, 
-                                                      morale = 0.5 }
+defaultFactionData = HumanDetails { faction = factionName, 
+                                    population = 100000000,
+                                    morale = 0.5 }
 
-placeFactionSkyObject factionName obj = obj { humanDetails = Just d }
-  where d = placeFactionHumanDetails factionName
+placeFactionSkyObject factionName obj = obj { humanDetails = Just defaultFactionData }
 
 placeFactionInSystem factionName system = system { skyObjects = s }
   where s = placeFactionSkyObject factionName (head (skyObjects system)) : tail (skyObjects system)
