@@ -18,10 +18,9 @@ coordsGenerator (x:y:z:rs) = c : coordsGenerator rs
   where c = Coords { x = x `mod` galaxySizeX , y = y `mod` galaxySizeY , z = z `mod` galaxySizeZ }
 
 createSystem (r:rs) coords = SolarSystem { coords = coords, skyObjects = skyObjects }
-  where skyObjects = take (skyObjectsNumber r) (randomSkyObjectsGenerator rs)
-
--- from 0 to 9 objects in one solar system
-skyObjectsNumber r = r `mod` 10
+  where skyObjects = take num (randomSkyObjectsGenerator rs)
+        -- from 1 to 10 objects in one solar system
+        num = r `mod` 10 + 1
 
 placeFactionInGalaxy :: String -> [SolarSystem] -> [SolarSystem]
 placeFactionInGalaxy factionName (sys:galaxy) = placeFactionInSystem factionName sys : galaxy
@@ -42,4 +41,4 @@ placeFactionSkyObject factionName obj = obj { humanDetails = Just d }
   where d = placeFactionHumanDetails factionName
 
 placeFactionInSystem factionName system = system { skyObjects = s }
-  where s = placeFactionSkyObject factionName (head (skyObjects system)) : tail (skyObjects system) -- FIXME: head of empty list
+  where s = placeFactionSkyObject factionName (head (skyObjects system)) : tail (skyObjects system)
