@@ -6,6 +6,7 @@ module CExpansion.Galaxy where
 import Happstack.State
 import Data.Data ( Data, Typeable)
 import Data.Maybe ( isJust )
+import Control.Monad ( liftM )
 
 data HumanDetails = HumanDetails {faction :: String,
                                   population :: Integer, 
@@ -79,5 +80,4 @@ withHumanDetails f galaxy = withSkyObjects f' galaxy
         where f' :: SkyObject -> SkyObject
               f' so@(SkyObject {humanDetails = hd}) = so { humanDetails = fm hd }
               fm :: Maybe HumanDetails -> Maybe HumanDetails
-              fm Nothing = Nothing
-              fm (Just x) = Just (f x)
+              fm x = liftM f x
