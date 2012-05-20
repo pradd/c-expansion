@@ -5,6 +5,7 @@ module CExpansion.Galaxy where
 
 import Happstack.State
 import Data.Data ( Data, Typeable)
+import Data.Maybe ( isJust )
 
 data HumanDetails = HumanDetails {faction :: String,
                                   population :: Integer, 
@@ -61,9 +62,7 @@ instance Component AppState where
     initialValue = AppState { galaxy = Galaxy [] }
     
 
-populatedSkyObjects skyObjects = [x | x <- skyObjects, isJust (humanDetails x)]
-  where isJust Nothing = False
-        isJust _ = True
+populatedSkyObjects skyObjects = filter (isJust . humanDetails) skyObjects
 
 isSystemPopulated sys = length (populatedSkyObjects (skyObjects sys)) > 0
 
