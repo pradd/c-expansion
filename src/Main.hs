@@ -3,6 +3,7 @@
 
 module Main ( main ) where
 
+import System.Random        ( randoms, mkStdGen )
 import Control.Applicative  ( (<$>))
 import Control.Exception    ( bracket)
 import Control.Monad        ( msum)
@@ -19,16 +20,12 @@ import CExpansion.Turn ( turn )
 import CExpansion.Init ( initGalaxy )
 
 execInit :: Update AppState Galaxy
-execInit = do rs <- randoms (1000 * Config.galaxyInitSystemsNumber) -- XXX fix randoms calculation
-              let new = initGalaxy rs
+execInit = do x <- getRandom
+              let toRandomsList x = randoms $ mkStdGen x
+                  new = initGalaxy (toRandomsList x)
               appState <- get
               put $ appState { galaxy = new }
               return new
-
-randoms 0 = return []
-randoms n = do x <- getRandom
-               rs <- randoms (n-1)
-               return (x:rs)
 
 execTurn :: Update AppState Galaxy
 execTurn =
