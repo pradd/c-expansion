@@ -60,7 +60,7 @@ reportResponse template galaxy notifications = ok $ toResponse $ Page $ printFac
 
 main = do templates <- loadTemplates
           bracket (startSystemState (Proxy :: Proxy AppState)) createCheckpointAndShutdown $ 
-            \_control -> simpleHTTP nullConf {port=serverPort} (handlers templates)
+            \_control -> simpleHTTP nullConf {port = Config.serverPort} (handlers templates)
        where createCheckpointAndShutdown control = do createCheckpoint control
                                                       shutdownSystem control
 
