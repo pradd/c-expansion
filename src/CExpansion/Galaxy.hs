@@ -5,7 +5,7 @@ module CExpansion.Galaxy where
 
 import Happstack.State
 import Data.Data ( Data, Typeable)
-import Data.Maybe ( isJust )
+import Data.Maybe ( isJust, catMaybes )
 import Control.Monad ( liftM )
 
 data HumanDetails = HumanDetails {faction :: String,
@@ -61,14 +61,17 @@ $(deriveSerialize ''AppState)
 instance Component AppState where
     type Dependencies AppState = End
     initialValue = AppState { galaxy = Galaxy [] }
-    
 
-populatedSkyObjects skyObjects = filter (isJust . humanDetails) skyObjects
 
-isSystemPopulated sys = length (populatedSkyObjects (skyObjects sys)) > 0
+populatedSystemsForGalaxy galaxy = filter isSystemPopulated galaxy
+    where isSystemPopulated sys = hasPopulatedSkyObjects (skyObjects sys)
+          hasPopulatedSkyObjects so = any (isJust . humanDetails) so
 
-populatedSystems galaxy = [x | x <- galaxy, isSystemPopulated x]
+populatedSkyObjectsForGalaxy galaxy = concat $ map skyObjects (populatedSystemsForGalaxy galaxy)
 
+humanDetailsForSkyObjects so = catMaybes $ map humanDetails so
+
+humanDetailsForGalaxy = humanDetailsForSkyObjects . populatedSkyObjectsForGalaxy
 
 withSolarSystems f (Galaxy ss) = Galaxy (map f ss)
 

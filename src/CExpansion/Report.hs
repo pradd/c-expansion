@@ -14,9 +14,11 @@ setAttrs template ss notifications =
                       $ setAttribute "factionName" Config.factionName 
                       $ setAttribute "systemsTotal"  (systemsTotal ss)
                       $ setAttribute "populatedSystemsTotal" (populatedSystemsTotal ss)
+                      $ setAttribute "populationTotal" (populationTotal ss)
                       $ template
 
 systemsTotal galaxy = show (length galaxy)
 
-populatedSystemsTotal galaxy = show (length $ populatedSystems galaxy)
-              
+populatedSystemsTotal galaxy = show (length $ populatedSystemsForGalaxy galaxy)
+
+populationTotal galaxy = show $ sum $ map population $ humanDetailsForGalaxy galaxy
