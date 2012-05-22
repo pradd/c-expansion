@@ -4,6 +4,7 @@ import Text.StringTemplate
 import CExpansion.Galaxy
 import qualified Config ( factionName )
 
+printFactionInfo :: String -> Galaxy -> String -> String
 printFactionInfo templateText g notifications = 
                                   let template = newSTMP templateText
                                       ss (Galaxy xs) = xs

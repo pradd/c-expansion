@@ -6,7 +6,6 @@ module Main ( main ) where
 import System.Random        ( randoms, mkStdGen )
 import Control.Applicative  ( (<$>))
 import Control.Exception    ( bracket)
-import Control.Monad        ( msum)
 import Control.Monad.Reader ( ask)
 import Control.Monad.State  ( get, put)
 import Happstack.Server
@@ -20,9 +19,9 @@ import CExpansion.Turn ( turn )
 import CExpansion.Init ( initGalaxy )
 
 execInit :: Update AppState Galaxy
-execInit = do x <- getRandom
+execInit = do seed <- getRandom
               let toRandomsList x = randoms $ mkStdGen x
-                  new = initGalaxy (toRandomsList x)
+                  new = initGalaxy (toRandomsList seed)
               appState <- get
               put $ appState { galaxy = new }
               return new
@@ -62,6 +61,7 @@ main = do templates <- loadTemplates
        where createCheckpointAndShutdown control = do createCheckpoint control
                                                       shutdownSystem control
 
+loadTemplates :: IO [String]
 loadTemplates = do templateText <- readFile "tpl/report.st"
                    return [templateText]
 

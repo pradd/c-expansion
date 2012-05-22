@@ -5,7 +5,7 @@ module CExpansion.Galaxy where
 
 import Happstack.State
 import Data.Data ( Data, Typeable)
-import Data.Maybe ( isJust, catMaybes )
+import Data.Maybe ( isJust, mapMaybe )
 import Control.Monad ( liftM )
 
 data HumanDetails = HumanDetails {faction :: String,
@@ -63,24 +63,29 @@ instance Component AppState where
     initialValue = AppState { galaxy = Galaxy [] }
 
 
-populatedSystemsForGalaxy galaxy = filter isSystemPopulated galaxy
+populatedSystemsForGalaxy :: [SolarSystem] -> [SolarSystem]
+populatedSystemsForGalaxy = filter isSystemPopulated
     where isSystemPopulated sys = hasPopulatedSkyObjects (skyObjects sys)
-          hasPopulatedSkyObjects so = any (isJust . humanDetails) so
+          hasPopulatedSkyObjects = any (isJust . humanDetails)
 
-populatedSkyObjectsForGalaxy galaxy = concat $ map skyObjects (populatedSystemsForGalaxy galaxy)
+populatedSkyObjectsForGalaxy :: [SolarSystem] -> [SkyObject]
+populatedSkyObjectsForGalaxy ss = concatMap skyObjects (populatedSystemsForGalaxy ss)
 
-humanDetailsForSkyObjects so = catMaybes $ map humanDetails so
+humanDetailsForSkyObjects :: [SkyObject] -> [HumanDetails]
+humanDetailsForSkyObjects = mapMaybe humanDetails
 
+humanDetailsForGalaxy :: [SolarSystem] -> [HumanDetails]
 humanDetailsForGalaxy = humanDetailsForSkyObjects . populatedSkyObjectsForGalaxy
 
+withSolarSystems :: (SolarSystem -> SolarSystem) -> Galaxy -> Galaxy
 withSolarSystems f (Galaxy ss) = Galaxy (map f ss)
 
-withSkyObjects f galaxy = withSolarSystems f' galaxy 
+withSkyObjects :: (SkyObject -> SkyObject) -> Galaxy -> Galaxy
+withSkyObjects f = withSolarSystems f' 
         where f' :: SolarSystem -> SolarSystem
               f' ss@(SolarSystem {skyObjects = so}) = ss { skyObjects = map f so }
 
-withHumanDetails f galaxy = withSkyObjects f' galaxy 
+withHumanDetails :: (HumanDetails -> HumanDetails) -> Galaxy -> Galaxy
+withHumanDetails f = withSkyObjects f' 
         where f' :: SkyObject -> SkyObject
-              f' so@(SkyObject {humanDetails = hd}) = so { humanDetails = fm hd }
-              fm :: Maybe HumanDetails -> Maybe HumanDetails
-              fm x = liftM f x
+              f' so@(SkyObject {humanDetails = hd}) = so { humanDetails = liftM f hd }
