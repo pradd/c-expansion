@@ -55,6 +55,7 @@ dumpResponse galaxy = ok $ toResponse $ PlainText $ show galaxy
 
 reportResponse template galaxy notifications = ok $ toResponse $ Page $ printFactionInfo template galaxy notifications
 
+main :: IO ()
 main = do templates <- loadTemplates
           bracket (startSystemState (Proxy :: Proxy AppState)) createCheckpointAndShutdown $ 
             \_control -> simpleHTTP nullConf {port = Config.serverPort} (handlers templates)
