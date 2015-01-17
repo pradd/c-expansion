@@ -1,22 +1,15 @@
 module CExpansion.Report ( printFactionInfo ) where
 
-import Text.StringTemplate
 import CExpansion.Galaxy
 import qualified Config ( factionName )
 
-printFactionInfo :: String -> Galaxy -> String -> String
-printFactionInfo templateText g notifications = 
-                                  let template = newSTMP templateText
-                                      ss (Galaxy xs) = xs
-                                  in  toString $ setAttrs template (ss g) notifications
-
-setAttrs template ss notifications = 
-                        setAttribute "notifications" notifications 
-                      $ setAttribute "factionName" Config.factionName 
-                      $ setAttribute "systemsTotal"  (systemsTotal ss)
-                      $ setAttribute "populatedSystemsTotal" (populatedSystemsTotal ss)
-                      $ setAttribute "populationTotal" (populationTotal ss)
-                      $ template
+printFactionInfo :: Galaxy -> String -> String
+printFactionInfo (Galaxy ss) notifications = 
+                         "notifications \n" ++ notifications 
+                      ++ "factionName \n" ++ Config.factionName 
+                      ++ "systemsTotal \n" ++ (systemsTotal ss)
+                      ++ "populatedSystemsTotal \n" ++ (populatedSystemsTotal ss)
+                      ++ "populationTotal \n" ++ (populationTotal ss)
 
 systemsTotal galaxy = show (length galaxy)
 

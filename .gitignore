@@ -1,4 +1,6 @@
-_local
 .dist-buildwrapper
 .project
 dist
+cabal.sandbox.config
+.cabal-sandbox
+report.html

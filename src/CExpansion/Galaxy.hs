@@ -1,67 +1,36 @@
-{-# LANGUAGE DeriveDataTypeable, FlexibleContexts, GeneralizedNewtypeDeriving, 
-  MultiParamTypeClasses, TemplateHaskell, TypeFamilies #-}
-
 module CExpansion.Galaxy where
 
-import Happstack.State
-import Data.Data ( Data, Typeable)
 import Data.Maybe ( isJust, mapMaybe )
 import Control.Monad ( liftM )
 
 data HumanDetails = HumanDetails {faction :: String,
                                   population :: Integer, 
                                   morale :: Float
-                                 } deriving (Eq, Read, Show, Data, Typeable) 
-
-instance Version HumanDetails
-$(deriveSerialize ''HumanDetails)
+                                 } deriving (Eq, Read, Show) 
 
 data SkyObjectType = Planet
                    | Belt
-  deriving (Eq, Read, Show, Data, Typeable) 
-
-instance Version SkyObjectType
-$(deriveSerialize ''SkyObjectType)
+  deriving (Eq, Read, Show) 
 
 data SkyObject = SkyObject {humanDetails :: Maybe HumanDetails, 
                             skyObjectType :: SkyObjectType
                             -- astroDetails
                             -- geoDetais
                             }
-  deriving (Eq, Read, Show, Data, Typeable) 
-
-instance Version SkyObject
-$(deriveSerialize ''SkyObject)
+  deriving (Eq, Read, Show) 
 
 data Coords = Coords {x :: Int, y :: Int, z :: Int}
-  deriving (Eq, Read, Show, Data, Typeable) 
-
-instance Version Coords
-$(deriveSerialize ''Coords)
+  deriving (Eq, Read, Show) 
 
 data SolarSystem = SolarSystem { coords :: Coords , skyObjects :: [SkyObject] }
-  deriving (Eq, Read, Show, Data, Typeable) 
-  
-instance Version SolarSystem
-$(deriveSerialize ''SolarSystem)
+  deriving (Eq, Read, Show) 
 
 newtype Galaxy = Galaxy [SolarSystem]
-    deriving (Eq, Read, Show, Data, Typeable)
-
-instance Version Galaxy
-$(deriveSerialize ''Galaxy)
+    deriving (Eq, Read, Show)
 
 data AppState = AppState {
       galaxy :: Galaxy
-    } deriving (Eq, Read, Show, Data, Typeable)
-    
-instance Version AppState
-$(deriveSerialize ''AppState)
-    
-instance Component AppState where
-    type Dependencies AppState = End
-    initialValue = AppState { galaxy = Galaxy [] }
-
+    } deriving (Eq, Read, Show)
 
 populatedSystemsForGalaxy :: [SolarSystem] -> [SolarSystem]
 populatedSystemsForGalaxy = filter isSystemPopulated

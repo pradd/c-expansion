@@ -10,12 +10,6 @@ executable c-expansion
   main-is:         Main.hs
   build-depends:   
                    base >= 4,
-                   bytestring,
-                   mtl,
-                   happstack-state,
-                   HStringTemplate,
-                   random,
-                   utf8-string,
-                   happstack-server
+                   random
   ghc-options:     -Wall
 
